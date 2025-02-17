@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "soshace.com",
         pathname: "/**", // Izinkan semua path dari domain ini
       },
+      {
+        protocol: "https",
+        hostname: "www.ternaklinux.com",
+        pathname: "/**", // Izinkan semua path dari domain ini
+      },
     ],
   },
 };

@@ -47,7 +47,7 @@ export default function articlesPage() {
                 <td className="px-6 py-4">55</td>
                 <td className="px-6 py-4 flex gap-4">
                   <Link
-                    href="/dashboard/writer/articles/detail"
+                    href="/dashboard/writer/articles/1"
                     className="font-medium text-blue-600 hover:underline"
                   >
                     Detail
