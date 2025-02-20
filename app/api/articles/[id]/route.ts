@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
-import { Param } from "@prisma/client/runtime/library";
-import { error } from "console";
 import { NextResponse } from "next/server";
+import path from "path";
+import fs from "fs";
 
 export const GET = async (
   req: Request,
@@ -44,12 +44,53 @@ export const PUT = async (
 
     const title = data.get("title") as string;
     const content = data.get("content") as string;
-    const imageUrl = data.get("imageUrl") as string | null;
+    const imageFile = data.get("imageUrl") as File | null;
     const authorId = Number(data.get("authorId"));
+
+    const existingArticle = await prisma.post.findUnique({
+      where: { id },
+    });
+
+    if (!existingArticle) {
+      return NextResponse.json({
+        error: true,
+        message: "Artikel tidak ditemukan.",
+      });
+    }
+
+    let imageUrl = existingArticle.imageUrl;
+
+    if (imageFile && imageFile.size > 0) {
+      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      if (imageUrl) {
+        const oldFilePath = path.join(
+          process.cwd(),
+          "public",
+          "uploads",
+          imageUrl
+        );
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
+        }
+      }
+
+      const buffer = Buffer.from(await imageFile.arrayBuffer());
+      const fileName = `${Date.now()}-${imageFile.name}`;
+      const filePath = path.join(uploadsDir, fileName);
+
+      fs.writeFileSync(filePath, buffer);
+
+      imageUrl = `/uploads/${fileName}`;
+    }
 
     const updateArticle = await prisma.post.update({
       where: {
-        id: Number(params.id),
+        id,
       },
       data: {
         title,
@@ -72,7 +113,10 @@ export const PUT = async (
   }
 };
 
-export const DELETE = async (_, { params }: { params: { id: string } }) => {
+export const DELETE = async (
+  req: Request,
+  { params }: { params: { id: string } }
+) => {
   const idUser = Number(params.id);
 
   try {

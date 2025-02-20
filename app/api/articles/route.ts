@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import path from "path";
+import fs from "fs";
 
 export const GET = async () => {
   try {
@@ -30,8 +32,9 @@ export const POST = async (req: Request) => {
 
     const title = data.get("title") as string;
     const content = data.get("content") as string;
-    const imageUrl = data.get("imageUrl") as string | null;
+    const imageFile = data.get("imageUrl") as File | null;
     const authorId = Number(data.get("authorId"));
+    let imageUrl = null;
 
     // Validasi input
     if (!title || !content || !authorId) {
@@ -39,6 +42,24 @@ export const POST = async (req: Request) => {
         error: true,
         message: "Diperlukan nilai Title, content dan authorId",
       });
+    }
+
+    if (imageFile && imageFile.size > 0) {
+      const uploadsDir = path.join(process.cwd(), "public", "uploads");
+
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      const buffer = Buffer.from(await imageFile.arrayBuffer());
+      const fileName = `${Date.now()}-${imageFile.name}`;
+      const filePath = path.join(uploadsDir, fileName);
+
+      // Tulis file ke folder public/uploads
+      fs.writeFileSync(filePath, buffer);
+
+      // Set URL gambar yang disimpan
+      imageUrl = `/uploads/${fileName}`;
     }
 
     const newArticle = await prisma.post.create({
