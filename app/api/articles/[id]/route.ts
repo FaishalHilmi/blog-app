@@ -12,17 +12,20 @@ export const GET = async (
       where: {
         id: Number(params.id),
       },
+      include: {
+        likes: true,
+      },
     });
 
     return NextResponse.json({
       error: false,
-      message: "Berhasil",
+      message: "Berhasil mendapatkan artikel berdasarkan ID",
       payload: article,
     });
   } catch (error) {
     return NextResponse.json({
       error: true,
-      message: "gagal",
+      message: "Gagal mendapatkan artikel berdasarkan ID",
     });
   }
 };
