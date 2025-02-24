@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+"use client";
+// import type { Metadata } from "next";
 import "./globals.css";
 import { Inter } from "next/font/google";
-import Header from "@/components/Header";
+import HeaderWrapper from "@/components/HeaderWrapper";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({
   weight: ["400", "700", "900"],
@@ -9,10 +11,10 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Blog App",
-  description: "Find the fresh idea and your inovation",
-};
+// export const metadata: Metadata = {
+//   title: "Blog App",
+//   description: "Find the fresh idea and your inovation",
+// };
 
 export default function RootLayout({
   children,
@@ -21,9 +23,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className}`}>
-        <Header />
-        <main>{children}</main>
+      <body className={inter.className}>
+        <SessionProvider>
+          <HeaderWrapper />
+          <main>{children}</main>
+        </SessionProvider>
       </body>
     </html>
   );

@@ -36,7 +36,7 @@ export const POST = async (req: Request) => {
     const authorId = Number(data.get("authorId"));
     let imageUrl = null;
 
-    // Validasi input
+    // Validasi inputhttp://localhost:3000/api/articles/7
     if (!title || !content || !authorId) {
       return NextResponse.json({
         error: true,
