@@ -47,7 +47,7 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({
       error: false,
       message: "Register Berhasil",
-      newUser,
+      // newUser,
     });
   } catch (error) {
     return NextResponse.json(

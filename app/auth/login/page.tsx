@@ -8,9 +8,9 @@ import { useEffect, useState } from "react";
 export default function LoginPages() {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
+  const [message, setMessage] = useState<string>();
   const router = useRouter();
   const { data: session } = useSession();
-  console.log(session);
 
   useEffect(() => {
     if (session?.user?.role) {
@@ -32,7 +32,8 @@ export default function LoginPages() {
     });
 
     if (result?.error) {
-      alert("Email dan password salah!");
+      setMessage("Email dan password salah!");
+      setTimeout(() => setMessage(""), 5000);
     }
   };
 
@@ -84,6 +85,9 @@ export default function LoginPages() {
             >
               Submit
             </button>
+            {message && (
+              <p className="mb-4 text-center text-red-500">{message}</p>
+            )}
             <div className="text-register text-center">
               <span>
                 Belum memiliki akun?{" "}
