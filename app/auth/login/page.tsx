@@ -3,13 +3,24 @@
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function LoginPages() {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const router = useRouter();
   const { data: session } = useSession();
+  console.log(session);
+
+  useEffect(() => {
+    if (session?.user?.role) {
+      if (session?.user?.role == "ADMIN") {
+        router.push("/dashboard/admin");
+      } else {
+        router.push("/dashboard/writer");
+      }
+    }
+  }, [session]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,12 +33,6 @@ export default function LoginPages() {
 
     if (result?.error) {
       alert("Email dan password salah!");
-    } else {
-      if (session?.user?.role == "WRITER") {
-        router.push("/dashboard/writer");
-      } else {
-        router.push("/dashboard/admin");
-      }
     }
   };
 
