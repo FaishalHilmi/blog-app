@@ -31,7 +31,7 @@ export default function Header() {
             </button>
           ) : (
             <button
-              onClick={() => signOut()}
+              onClick={() => signOut({ callbackUrl: "/" })}
               className="hidden md:block text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2"
             >
               Logout
@@ -129,7 +129,7 @@ export default function Header() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => signOut()}
+                    onClick={() => signOut({ callbackUrl: "/" })}
                     className="block md:hidden w-full text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2"
                   >
                     Logout
