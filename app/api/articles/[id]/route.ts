@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 export const GET = async (
   req: Request,
@@ -37,6 +39,14 @@ export const PUT = async (
   try {
     const data = await req.formData();
     const id = Number(params.id);
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user || !session.user.id) {
+      return NextResponse.json(
+        { error: true, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
     if (isNaN(id)) {
       return NextResponse.json({
@@ -47,8 +57,8 @@ export const PUT = async (
 
     const title = data.get("title") as string;
     const content = data.get("content") as string;
-    const imageFile = data.get("imageUrl") as File | null;
-    const authorId = Number(data.get("authorId"));
+    const imageFile = data.get("image") as File | null;
+    const authorId = Number(session?.user?.id);
 
     const existingArticle = await prisma.post.findUnique({
       where: { id },
@@ -58,6 +68,7 @@ export const PUT = async (
       return NextResponse.json({
         error: true,
         message: "Artikel tidak ditemukan.",
+        data,
       });
     }
 

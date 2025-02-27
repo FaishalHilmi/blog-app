@@ -1,7 +1,36 @@
+"use client";
+
+import { getArticleDetail } from "@/lib/article";
+import { Article } from "@/types/article";
+import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function DetailPage() {
+  const [article, setArticle] = useState<Article | null>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const { id } = useParams();
+
+  const fetchArticle = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/articles/${id}`);
+      const data = await res.json();
+      setArticle(data.payload);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+      fetchArticle;
+    }
+  };
+
+  useEffect(() => {
+    fetchArticle();
+  }, [id]);
+
   return (
     <section className="pt-20 bg-gray-100 min-h-screen">
       <div className="admin-container max-w-screen-2xl px-4 mx-auto py-10">
@@ -12,38 +41,35 @@ export default function DetailPage() {
           Kembali
         </Link>
         <Link
-          href="/dashboard/writer/articles/edit"
+          href={`/dashboard/writer/articles/edit/${id}`}
           className="bg-blue-700 hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg font-medium"
         >
           Edit Artikel
         </Link>
-        <div className="artikel-wrapper bg-white shadow-sm p-6 rounded-lg">
-          <Image
-            src="https://soshace.com/wp-content/uploads/2019/10/Getting-Started-with-NextJS-Inside.jpg"
-            alt="Gambar Artikel"
-            className="w-full h-96 object-cover rounded-lg mb-6"
-            width={500} // Lebar gambar
-            height={300} // Tinggi gambar
-          />
-          <h1 className="capitalize text-3xl font-bold mb-1">
-            Tutorial Next.ts Tahun 2024
-          </h1>
-          <span className="block mb-4 text-gray-400">11 Februari 2024</span>
-          <p className="text-justify">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Totam id
-            atque cum sint architecto non, optio reprehenderit ex repellendus
-            voluptate distinctio quam sed fuga placeat adipisci incidunt rem,
-            maiores perspiciatis qui rerum iure aut explicabo nemo saepe? Error
-            possimus explicabo laborum veniam iure a illum alias exercitationem.
-            Atque est voluptate facere numquam temporibus cum dolor tempora
-            similique veritatis in. Nostrum incidunt minima vitae alias quas,
-            enim cum. Quibusdam iure aliquid repudiandae sit, incidunt, sequi
-            cum pariatur provident labore repellat, amet ipsum maiores obcaecati
-            laboriosam officia! Magni nemo, odio eligendi delectus, deserunt
-            consequuntur velit laborum consectetur, error perferendis odit amet
-            temporibus.
-          </p>
-        </div>
+        {loading ? (
+          <div className="text-center py-10">
+            <p className="text-lg font-semibold text-gray-600">
+              Memuat data...
+            </p>
+          </div>
+        ) : (
+          <div className="artikel-wrapper bg-white shadow-sm p-6 rounded-lg">
+            <Image
+              src="https://soshace.com/wp-content/uploads/2019/10/Getting-Started-with-NextJS-Inside.jpg"
+              alt="Gambar Artikel"
+              className="w-full h-96 object-cover rounded-lg mb-6"
+              width={500} // Lebar gambar
+              height={300} // Tinggi gambar
+            />
+            <h1 className="capitalize text-3xl font-bold mb-2">
+              {article?.title}
+            </h1>
+            <span className="block mb-4 text-gray-400">
+              {moment(article?.createdAt).locale("id").format("LL")}
+            </span>
+            <p className="text-justify">{article?.content}</p>
+          </div>
+        )}
       </div>
     </section>
   );

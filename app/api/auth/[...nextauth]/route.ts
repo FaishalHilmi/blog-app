@@ -1,17 +1,15 @@
-"use server";
-
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: "jwt",
+    strategy: "jwt", // ✅ Pastikan ini bertipe `"jwt"` secara eksplisit
   },
   pages: {
-    signIn: "/auth/login", // Redirect ke halaman login jika tidak terautentikasi
+    signIn: "/auth/login",
   },
   providers: [
     CredentialsProvider({
@@ -52,14 +50,14 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: any; user?: any }) {
       if (user) {
         token.id = user.id;
         token.role = user.role;
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: any; token: any }) {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
@@ -67,6 +65,8 @@ const handler = NextAuth({
       return session;
     },
   },
-});
+};
 
+// ✅ SOLUSI: Gunakan `export default` untuk handler NextAuth
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

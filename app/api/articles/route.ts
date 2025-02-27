@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export const GET = async () => {
   try {
@@ -27,16 +29,23 @@ export const GET = async () => {
 
 export const POST = async (req: Request) => {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !session.user.id) {
+      return NextResponse.json(
+        { error: true, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     // Menangkap data dari request
     const data = await req.formData();
 
     const title = data.get("title") as string;
     const content = data.get("content") as string;
-    const imageFile = data.get("imageUrl") as File | null;
-    const authorId = Number(data.get("authorId"));
+    const imageFile = data.get("image") as File | null;
+    const authorId = Number(session.user.id);
     let imageUrl = null;
 
-    // Validasi inputhttp://localhost:3000/api/articles/7
     if (!title || !content || !authorId) {
       return NextResponse.json({
         error: true,
@@ -74,7 +83,6 @@ export const POST = async (req: Request) => {
     return NextResponse.json({
       error: false,
       message: "Berhasil menambahkan data",
-      data: newArticle,
     });
   } catch (error: any) {
     return NextResponse.json({
