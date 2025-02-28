@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 
 export default function WriterPages() {
   const [articleCount, setArticleCount] = useState<number>();
+  const [likeCount, setLikeCount] = useState<number>();
 
   const getArticleCount = async () => {
     try {
@@ -16,8 +17,20 @@ export default function WriterPages() {
     }
   };
 
+  const getLikeCount = async () => {
+    try {
+      const res = await fetch("/api/articles/like");
+      const data = await res.json();
+
+      setLikeCount(data.count);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getArticleCount();
+    getLikeCount();
   }, []);
 
   return (
@@ -39,7 +52,7 @@ export default function WriterPages() {
             <h1 className="text-3xl font-bold mb-2 text-black">
               Jumlah Total Likes
             </h1>
-            <span className="text-xl text-gray-500">100 Likes</span>
+            <span className="text-xl text-gray-500">{likeCount} Likes</span>
           </div>
         </div>
       </div>

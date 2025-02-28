@@ -15,7 +15,7 @@ export default function Card({
 }) {
   return (
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm">
-      <a href="#">
+      <Link href={`/detail/${id}`}>
         <Image
           className="rounded-t-lg w-full h-44 object-cover"
           src={imageUrl}
@@ -23,7 +23,7 @@ export default function Card({
           width={500}
           height={300}
         />
-      </a>
+      </Link>
       <div className="p-5">
         <Link href={`/detail/${id}`}>
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 line-clamp-1">
