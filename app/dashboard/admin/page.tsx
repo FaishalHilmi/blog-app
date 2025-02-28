@@ -22,7 +22,7 @@ export default function AdminPage() {
       const res = await fetch("/api/user/count");
       const data = await res.json();
 
-      setUserCount(data);
+      setUserCount(data.count);
     } catch (error) {
       console.log(error);
     }
