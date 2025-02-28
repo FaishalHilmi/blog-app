@@ -10,6 +10,7 @@ export default function EditArticle() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { id } = useParams();
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function EditArticle() {
       setArticle(data.payload);
       setTitle(data.payload.title);
       setContent(data.payload.content);
+      setImagePreview(data.payload.imageUrl); // Set gambar yang sudah ada
     } catch (error) {
       console.error("Error fetching article:", error);
     } finally {
@@ -67,16 +69,32 @@ export default function EditArticle() {
     }
   };
 
+  // Handle perubahan gambar
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    setImage(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(article?.imageUrl || null);
+    }
+  };
+
   return (
     <section className="pt-20 bg-gray-100 min-h-screen">
       <div className="admin-container max-w-screen-2xl px-4 mx-auto py-10">
         <Link
           href={"/dashboard/writer/articles"}
-          className="inline-block mb-6 text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2"
+          className="inline-block mb-6 text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
         >
           Kembali
         </Link>
-        <h1 className="mb-10 text-4xl font-bold">Edit Artikel</h1>
+        <h1 className="mb-10 text-4xl font-bold text-black">Edit Artikel</h1>
 
         <div className="form-wrapper w-full bg-white p-6">
           <form onSubmit={handleUpdate}>
@@ -110,16 +128,14 @@ export default function EditArticle() {
                   id="image"
                   type="file"
                   accept=".jpg, .jpeg, .png"
-                  onChange={(e) =>
-                    setImage(e.target.files ? e.target.files[0] : null)
-                  }
+                  onChange={handleImageChange}
                 />
-                {article?.imageUrl && (
+                {imagePreview && (
                   <div className="mt-2">
-                    <p className="text-sm text-gray-600">Gambar saat ini:</p>
+                    <p className="text-sm text-gray-600">Preview gambar:</p>
                     <img
-                      src={article.imageUrl}
-                      alt="Gambar Artikel"
+                      src={imagePreview}
+                      alt="Preview Gambar"
                       className="w-32 h-32 object-cover mt-2 border rounded"
                     />
                   </div>

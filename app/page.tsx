@@ -6,10 +6,10 @@ export default function Home() {
     <section className="pt-20 bg-gray-100 min-h-screen">
       <div className="admin-container max-w-screen-2xl px-4 mx-auto py-10">
         <div className="heading text-center mb-20">
-          <h1 className="mb-4 text-5xl font-bold">
+          <h1 className="mb-4 text-5xl font-bold text-black">
             Jelajahi Dunia Kreativitas dan Inovasi
           </h1>
-          <span className="text-lg">
+          <span className="text-lg text-gray-800">
             Temukan Ide-Ide Segar dan Tips Praktis untuk Mewujudkan Karya Anda
           </span>
         </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { getArticleDetail } from "@/lib/article";
 import { Article } from "@/types/article";
 import moment from "moment";
 import Image from "next/image";
@@ -36,7 +35,7 @@ export default function DetailPage() {
       <div className="admin-container max-w-screen-2xl px-4 mx-auto py-10">
         <Link
           href="/dashboard/writer"
-          className="inline-block mb-6 text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+          className="inline-block mb-6 text-white bg-black hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2"
         >
           Kembali
         </Link>
@@ -54,20 +53,24 @@ export default function DetailPage() {
           </div>
         ) : (
           <div className="artikel-wrapper bg-white shadow-sm p-6 rounded-lg">
-            <Image
-              src="https://soshace.com/wp-content/uploads/2019/10/Getting-Started-with-NextJS-Inside.jpg"
-              alt="Gambar Artikel"
-              className="w-full h-96 object-cover rounded-lg mb-6"
-              width={500} // Lebar gambar
-              height={300} // Tinggi gambar
-            />
-            <h1 className="capitalize text-3xl font-bold mb-2">
+            {article?.imageUrl ? (
+              <Image
+                src={article.imageUrl} // Tidak perlu menambahkan "/uploads/" lagi
+                alt="Gambar Artikel"
+                className="w-full h-96 object-cover rounded-lg mb-6"
+                width={500}
+                height={300}
+              />
+            ) : (
+              <p className="text-gray-400">Gambar tidak tersedia</p>
+            )}
+            <h1 className="capitalize text-3xl font-bold mb-2 text-black">
               {article?.title}
             </h1>
             <span className="block mb-4 text-gray-400">
               {moment(article?.createdAt).locale("id").format("LL")}
             </span>
-            <p className="text-justify">{article?.content}</p>
+            <p className="text-justify text-black">{article?.content}</p>
           </div>
         )}
       </div>
