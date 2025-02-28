@@ -1,7 +1,30 @@
+"use client";
+
 import Card from "@/components/Card";
-import Image from "next/image";
+import { Article } from "@/types/article";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const getAllArticles = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/articles");
+      const data = await res.json();
+      setArticles(data.payload);
+    } catch (error) {
+      console.log("Terjadi kesalahan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllArticles();
+  }, []);
+
   return (
     <section className="pt-20 bg-gray-100 min-h-screen">
       <div className="admin-container max-w-screen-2xl px-4 mx-auto py-10">
@@ -14,10 +37,16 @@ export default function Home() {
           </span>
         </div>
         <div className="card-section grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card />
-          <Card />
-          <Card />
-          <Card />
+          {articles.map((article, index) => (
+            <div key={index}>
+              <Card
+                id={article.id}
+                imageUrl={article.imageUrl}
+                title={article.title}
+                content={article.content}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </section>

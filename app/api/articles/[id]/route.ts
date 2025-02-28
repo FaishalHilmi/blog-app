@@ -131,10 +131,10 @@ export const DELETE = async (
   req: Request,
   { params }: { params: { id: string } }
 ) => {
-  const idUser = Number(params.id);
+  const articleId = Number(params.id);
 
   try {
-    if (isNaN(idUser)) {
+    if (isNaN(articleId)) {
       return NextResponse.json({
         error: true,
         message: "ID tidak ditemukan",

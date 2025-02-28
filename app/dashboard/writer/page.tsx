@@ -7,7 +7,7 @@ export default function WriterPages() {
 
   const getArticleCount = async () => {
     try {
-      const res = await fetch("/api/articles/count");
+      const res = await fetch("/api/articles/count-by-author");
       const data = await res.json();
 
       setArticleCount(data.count);

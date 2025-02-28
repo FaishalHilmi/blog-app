@@ -3,19 +3,22 @@ import { NextResponse } from "next/server";
 
 export const GET = async () => {
   try {
-    const totalArticles = await prisma.post.count();
+    const allArticles = await prisma.user.findMany();
 
     return NextResponse.json(
       {
-        error: true,
-        message: "Berhasil mengambil jumlah data artikel",
-        count: totalArticles,
+        error: false,
+        message: "Berhasil mendapatkan data",
+        payload: allArticles,
       },
       { status: 200 }
     );
   } catch (error) {
     return NextResponse.json(
-      { error: true, message: "Gagal mengambil jumlah data artikel" },
+      {
+        error: true,
+        message: "Gagal mendapatkan data",
+      },
       { status: 500 }
     );
   }
